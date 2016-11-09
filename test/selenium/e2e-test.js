@@ -3,12 +3,15 @@ const fs = require('fs');
 const expect = require('chai').expect;
 const http = require('http');
 const MainPage = require('./main-page');
+const MainPage = require('./details-panel');
 
 const driver = new selenium.Builder()
     .forBrowser('chrome')
     .build();
 
+// Page Objects
 const page = new MainPage(driver);
+const detailsPanel = new detailsPanel(driver);
 
 describe('Search bar', function () {
   this.timeout(5000);
