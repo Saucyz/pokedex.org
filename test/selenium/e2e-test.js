@@ -3,7 +3,7 @@ const fs = require('fs');
 const expect = require('chai').expect;
 const http = require('http');
 const MainPage = require('./main-page');
-const MainPage = require('./details-panel');
+const DetailsPanel = require('./details-panel');
 
 const driver = new selenium.Builder()
     .forBrowser('chrome')
@@ -11,10 +11,10 @@ const driver = new selenium.Builder()
 
 // Page Objects
 const page = new MainPage(driver);
-const detailsPanel = new detailsPanel(driver);
+const detailsPanel = new DetailsPanel(driver);
 
-describe('Search bar', function () {
-  this.timeout(5000);
+describe('pokedex.org', function () {
+  this.timeout(10000);
 
   before(function () {
     // Open the app page. This assumes the server has already been started
@@ -39,6 +39,9 @@ describe('Search bar', function () {
       const req = http.request(options, function (res) {
         console.log('\nFinished sending coverage data.');
         done();
+      }).on('error', function (error) {
+        console.log(`problem with request: ${error.message}`);
+        done();
       });
 
       if (!fs.existsSync('coverage')) {
@@ -52,11 +55,104 @@ describe('Search bar', function () {
     });
   });
 
-  it('filters to the correct pokemon when entering a valid name', function (done) {
-    page.search('pikachu');
-    driver.sleep(1000); // wait for results to filter
-    page.getSearchResults().then(function (elements) {
-      expect(elements.length).to.equal(1);
+  describe('Main page', function () {
+    it('loads sprites when scrolling', function (done) {
+      // check last pokemon doesn't have children
+      // scroll and check that they are there
+      // scroll up?
+      done();
+    });
+
+    it('filters to no pokemon when entering an invalid name', function (done) {
+      // search asdf;lkajd;s
+      // check no pokemon
+      done();
+    });
+
+    it('filters to correct pokemon by entering a partial name', function (done) {
+      // search start of name
+      // check results match
+      done();
+    });
+
+    it('filters to the correct pokemon when entering a valid full name', function (done) {
+      page.search('pikachu');
+      driver.sleep(1000); // wait for results to filter
+      // FIXME: wait for 'progress-mask' div to remove its 'shown class' instead of sleep
+      page.getSearchResults().then(function (elements) {
+        expect(elements.length).to.equal(1);
+        done();
+      });
+    });
+  });
+
+  describe('Details panel for Pikachu', function() {
+    it('opens when clicking the correct tile', function (done) {
+      // click pikachu tile? by class id? 1st element
+      done();
+    });
+
+    it('has correct name', function (done) {
+      // check that the name is right
+      done();
+    });
+
+    it('has correct background', function (done) {
+      // check the background changes to right colors
+      done();
+    });
+
+    it('has correct sprite', function (done) {
+      // check that the thing opens
+      done();
+    });
+
+    it('has correct pokedex number', function (done) {
+      // check that the number
+      done();
+    });
+
+    it('has correct stats', function (done) {
+      // check that the stats
+      done();
+    });
+
+    it('has correct sprite', function (done) {
+      // check the sprite
+      done();
+    });
+
+    it('has correct moves', function (done) {
+      // check the number of moves is correct
+      done();
+    });
+
+    it('has correct move that can be clicked', function (done) {
+      // check that it opens
+      // check info
+      done();
+    });
+
+    it('has correct move that can be closed after opening', function (done) {
+      // check that it closes
+      done();
+    });
+
+    it('can be closed', function (done) {
+      // close the panel
+      // check the display
+      done();
+    });
+  });
+
+  describe('Hamburger menu', function () {
+    it('closes when clicked', function (done) {
+      // close the panel check style
+      done();
+    });
+
+    it('opens when clicked', function (done) {
+      // open the panel check style
       done();
     });
   });
