@@ -1,15 +1,14 @@
 const selenium = require('selenium-webdriver');
-// const proxy = require('selenium-webdriver/proxy');
 const fs = require('fs');
 const expect = require('chai').expect;
 const http = require('http');
-
-const By = selenium.By;
-const until = selenium.until;
+const MainPage = require('./main-page');
 
 const driver = new selenium.Builder()
     .forBrowser('chrome')
     .build();
+
+const page = new MainPage(driver);
 
 describe('Search bar', function () {
   this.timeout(5000);
@@ -51,9 +50,9 @@ describe('Search bar', function () {
   });
 
   it('filters to the correct pokemon when entering a valid name', function (done) {
-    driver.findElement(By.id('monsters-search-bar')).sendKeys('pikachu');
+    page.search('pikachu');
     driver.sleep(1000); // wait for results to filter
-    driver.findElements(By.xpath('//*[@id="monsters-list"]/li')).then(function (elements) {
+    page.getSearchResults().then(function (elements) {
       expect(elements.length).to.equal(1);
       done();
     });
