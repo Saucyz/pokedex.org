@@ -208,13 +208,27 @@ describe('pokedex.org', function () {
 
   describe('Hamburger menu', function () {
     it('closes when clicked', function (done) {
-      // close the panel check style
-      done();
+      page.clickHamburgerMenu().then(function() {
+        return page.isHamburgerVisibile();
+      }).then(function (isVisible) {
+        expect(isVisible).to.be.false;
+        done();
+      }).catch(function (err) {
+        throw err;
+        done();
+      });
     });
 
     it('opens when clicked', function (done) {
-      // open the panel check style
-      done();
+      page.clickHamburgerMenu().then(function() {
+        return page.isHamburgerVisibile();
+      }).then(function (isVisible) {
+        expect(isVisible).to.be.true;
+        done();
+      }).catch(function (err) {
+        throw err;
+        done();
+      });
     });
   });
 });

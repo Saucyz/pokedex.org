@@ -8,6 +8,8 @@ const progressMaskLocator = By.css('#progress-mask');
 const tileSpriteLocator = By.css('button.monster-sprite');
 const tileTextLocator = By.css('span');
 const allLocator = By.css('all');
+const hamburgerMenuButtonLocator = By.css('.sidedrawer-toggle.mui--hidden-xs.js-hide-sidedrawer.hover-shadow');
+const contentWrapperLocator = By.id('content-wrapper');
 
 class MainPage {
   constructor(driver) {
@@ -74,7 +76,7 @@ class MainPage {
 
   scrollToTop() {
     return this.driver.executeScript("window.scrollTo(0, 0);").then(() => {
-      return this.driver.sfleep(1000);
+      return this.driver.sleep(1000);
     }).catch((err) => {
       throw err;
     });
@@ -84,16 +86,25 @@ class MainPage {
     // FIXME: the conditional doesn't actually work, so this is just a timer
     return this.driver.wait(() => {
       !this.progressMask.isDisplayed();
-    }, 1500).catch(() => {});
+    }, 1000).catch(() => {});
   }
 
   clickHamburgerMenu() {
-    // click it
+    return this.driver.findElement(hamburgerMenuButtonLocator).click()
+    .catch(() => {
+      try {
+        return this.driver.findElement(hamburgerMenuButtonLocator).click();
+      } catch (e) {
+        throw e;
+      }
+    });
   }
 
   isHamburgerVisibile() {
-    // get the display attributes or sommething to check that visibility
-    // return boolean
+    return this.driver.findElement(contentWrapperLocator).getCssValue('margin-left')
+    .then((attribute) => {
+      return attribute == '200px';
+    });
   }
 }
 
