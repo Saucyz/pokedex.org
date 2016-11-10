@@ -2,6 +2,8 @@ const selenium = require('selenium-webdriver');
 
 const By = selenium.By;
 
+const backButtonLocator = By.css('button.back-button.detail-back-button.hover-shadow');
+
 class DetailsPanel {
   constructor(driver) {
     this.driver = driver;
@@ -9,6 +11,16 @@ class DetailsPanel {
 
   close() {
     // close it
+    return this.driver.findElement(backButtonLocator).click()
+    .catch(() => {
+      try {
+        return this.driver.sleep(1000).then(() => {
+          return this.driver.findElement(backButtonLocator).click();
+        });
+      } catch (e) {
+        throw e;
+      }
+    });
   }
 
   isVisible() {

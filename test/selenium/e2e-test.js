@@ -14,7 +14,7 @@ const page = new MainPage(driver);
 const detailsPanel = new DetailsPanel(driver);
 
 describe('pokedex.org', function () {
-  this.timeout(10000);
+  this.timeout(30000);
 
   before(function () {
     // Open the app page. This assumes the server has already been started
@@ -150,6 +150,7 @@ describe('pokedex.org', function () {
   describe('Details panel for Pikachu', function() {
     it('opens when clicking the correct tile', function (done) {
       // click pikachu tile? by class id? 1st element
+      page.clickTileClass('monster-sprite sprite-25');
       done();
     });
 
@@ -202,6 +203,7 @@ describe('pokedex.org', function () {
     it('can be closed', function (done) {
       // close the panel
       // check the display
+      detailsPanel.close();
       done();
     });
   });

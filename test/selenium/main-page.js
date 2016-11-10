@@ -62,8 +62,18 @@ class MainPage {
     });
   }
 
-  clickTile(webElement) {
+  clickTileClass(pokeClass) {
     // click the tile
+    return this.driver.findElement(By.className(pokeClass)).click()
+    .catch(() => {
+      try {
+        return this.driver.sleep(1000).then(() => {
+          return this.driver.findElement(By.className(pokeClass)).click();
+        });
+      } catch (e) {
+        throw e;
+      }
+    });
   }
 
   scrollToBottom() {
