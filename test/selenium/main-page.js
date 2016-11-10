@@ -93,16 +93,23 @@ class MainPage {
     return this.driver.findElement(hamburgerMenuButtonLocator).click()
     .catch(() => {
       try {
-        return this.driver.findElement(hamburgerMenuButtonLocator).click();
+        return this.driver.sleep(1000).then(() => {
+          return this.driver.findElement(hamburgerMenuButtonLocator).click();
+        });
       } catch (e) {
         throw e;
       }
     });
   }
 
+  waitForHamburgerMenuAnimation() {
+    return this.driver.sleep(200); // animation length as defined in the source
+  }
+
   isHamburgerVisibile() {
-    return this.driver.findElement(contentWrapperLocator).getCssValue('margin-left')
-    .then((attribute) => {
+    return this.waitForHamburgerMenuAnimation().then(() => {
+      return this.driver.findElement(contentWrapperLocator).getCssValue('margin-left');
+    }).then((attribute) => {
       return attribute == '200px';
     });
   }
