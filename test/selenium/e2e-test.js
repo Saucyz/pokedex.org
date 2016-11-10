@@ -56,33 +56,94 @@ describe('pokedex.org', function () {
   });
 
   describe('Main page', function () {
-    it('loads sprites when scrolling', function (done) {
-      // check last pokemon doesn't have children
-      // scroll and check that they are there
-      // scroll up?
-      done();
+
+    const validateTiles = function (actualTiles, expectedTiles) {
+      const actual = actualTiles;
+      return new Promise(function (resolve, reject) {
+        actual.forEach(function (actualTile, i) {
+          page.getTileSpriteClass(actualTile).then(function (spriteClass) {
+            expect(spriteClass).to.equal(expectedTiles[i].spriteClass);
+            page.getTileText(actualTile).then(function(text) {
+              expect(text).to.equal(expectedTiles[i].text);
+              resolve();
+            });
+          }).catch(function (err) {
+            reject(err);
+          });
+        });
+      });
+    };
+
+    const testSearch = function (done, searchString, expectedCount, expectedTiles) {
+      page.search(searchString);
+      page.getSearchResults().then(function (elements) {
+        expect(elements.length).to.equal(expectedCount);
+        if (expectedCount > 0) {
+          validateTiles(elements, expectedTiles).then(function () {
+            page.clearSearch();
+            done();
+          }).catch(function (err) {
+            console.log(err);
+            done();
+          });
+        } else {
+          page.clearSearch();
+          done();
+        }
+      });
+    };
+
+    it('loads sprites and text when scrolling', function (done) {
+      // last pokemon shouldn't have the sprite and text before it's in the viewport
+      // scroll to bottom and check that text and sprite were loaded
+      let lastTile;
+      page.getLastTile().then(function(tile) {
+        lastTile = tile;
+        return page.getTileChildren(lastTile);
+      }).then(function(children) {
+        expect(children.length).to.equal(0);
+        return page.scrollToBottom();
+      }).then(function() {
+        return page.getTileSpriteClass(lastTile);
+      }).then(function(spriteClass) {
+        expect(spriteClass).to.equal('monster-sprite sprite-649');
+        return page.getTileText(lastTile);
+      }).then(function(tileText) {
+        expect(tileText).to.equal('Genesect');
+        return page.scrollToTop();
+      }).then(function() {
+        done();
+      }).catch(function(err) {
+        throw err;
+        done();
+      });
     });
 
     it('filters to no pokemon when entering an invalid name', function (done) {
-      // search asdf;lkajd;s
-      // check no pokemon
-      done();
+      const searchString = 'notapokemon';
+      const expectedCount = 0;
+      const expectedTiles = [];
+      testSearch(done, searchString, expectedCount, expectedTiles);
     });
 
     it('filters to correct pokemon by entering a partial name', function (done) {
-      // search start of name
-      // check results match
-      done();
+      const searchString = 'butter';
+      const expectedCount = 1;
+      const expectedTiles = [{
+        spriteClass: 'monster-sprite sprite-12',
+        text: 'Butterfree'
+      }];
+      testSearch(done, searchString, expectedCount, expectedTiles);
     });
 
     it('filters to the correct pokemon when entering a valid full name', function (done) {
-      page.search('pikachu');
-      driver.sleep(1000); // wait for results to filter
-      // FIXME: wait for 'progress-mask' div to remove its 'shown class' instead of sleep
-      page.getSearchResults().then(function (elements) {
-        expect(elements.length).to.equal(1);
-        done();
-      });
+      const searchString = 'pikachu';
+      const expectedCount = 1;
+      const expectedTiles = [{
+        spriteClass: 'monster-sprite sprite-25',
+        text: 'Pikachu'
+      }];
+      testSearch(done, searchString, expectedCount, expectedTiles);
     });
   });
 
